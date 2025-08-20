@@ -1,0 +1,331 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Para mi persona favorita ❤️</title>
+  <style>
+    :root{
+      --bg:#0b0f14;
+      --accent:#ffd300;
+      --text:#e6edf3;
+      --muted:#9fb0c3;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      background: radial-gradient(1200px 800px at 50% -200px,#141b24 20%,#0b0f14 60%);
+      color:var(--text);
+      font-family: system-ui, sans-serif;
+      line-height:1.4;
+      overflow:hidden;
+    }
+    .wrap{
+      position:relative;
+      width:100%;
+      height:100%;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap:18px;
+      padding:18px;
+    }
+    .heart-zone{
+      pointer-events:none;
+      position:fixed;
+      inset:0;
+      display:grid;
+      place-items:center;
+      padding:80px 24px 96px;
+    }
+    canvas#heartCanvas{
+      filter: drop-shadow(0 8px 24px rgba(255,211,0,.15));
+    }
+    .lyrics-bar{
+      position:fixed;
+      left:0; right:0;
+      bottom:0;
+      height:54px;
+      background:linear-gradient(90deg,var(--accent),#ffe866);
+      display:flex;
+      align-items:center;
+      overflow:hidden;
+      box-shadow: var(--shadow);
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+    }
+    .lyrics-inner{
+      white-space:nowrap;
+      font-weight:600;
+      letter-spacing:.5px;
+      color:#2a2300;
+      font-size:18px;
+      animation: marquee 60s linear infinite;
+      padding-left: 100%;
+    }
+    @keyframes marquee{
+      0%{ transform: translateX(0); }
+      100%{ transform: translateX(-100%); }
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0));
+      border:1px solid rgba(255,255,255,.06);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:0;
+      min-height: 240px;
+      aspect-ratio: 16/9;
+    }
+    .label{
+      position:absolute;
+      top:10px; left:12px;
+      background: rgba(0,0,0,.45);
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+      backdrop-filter: blur(6px);
+      border:1px solid rgba(255,255,255,.08);
+    }
+    .playy{
+      cursor:pointer;
+      display:inline-flex;
+      align-items:center;
+      gap:12px;
+      padding:14px 18px;
+      border-radius: 12px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      backdrop-filter: blur(6px);
+      transition:.2s transform,.2s background;
+      font-weight:600;
+      user-select:none;
+    }
+    .playy:hover{ transform: translateY(-2px); background: rgba(255,255,255,.12); }
+    .playy svg{ width:18px;height:18px; }
+    .fill{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      border:0;
+      display:none;
+    }
+    .fill.active{ display:block; }
+    .hint{
+      position:fixed;
+      top:12px; right:12px;
+      background: rgba(0,0,0,.55);
+      color:var(--muted);
+      padding:8px 12px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.08);
+      font-size:12px;
+      backdrop-filter: blur(6px);
+      max-width: 46ch;
+    }
+    @media (max-width: 900px){
+      .wrap{ grid-template-columns: 1fr; grid-template-rows: auto auto auto auto; overflow:auto; padding-bottom:84px; }
+      body{ overflow:auto; }
+      .heart-zone{ position:absolute; padding:36px 12px 120px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="hint">Nota: muchos navegadores bloquean el <b>autoplay</b> con sonido. Si no escuchas nada, toca un botón Play.</div>
+
+  <div class="heart-zone">
+    <canvas id="heartCanvas" width="900" height="520"></canvas>
+  </div>
+
+  <div class="wrap">
+    <div class="card" id="card-tl">
+      <div class="label">💘 Video romántico</div>
+      <button class="playy" data-target="tl">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Play
+      </button>
+      <iframe class="fill" id="frame-tl" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen data-src="https://www.youtube.com/embed/iTbORVL-6fE?autoplay=1&mute=0&rel=0"></iframe>
+    </div>
+
+    <div class="card" id="card-tr">
+      <div class="label">🎵 Canción especial</div>
+      <button class="playy" data-target="tr">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Play
+      </button>
+      <iframe class="fill" id="frame-tr" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen data-src="https://www.youtube.com/embed/rcRX1ma5Zh4?autoplay=1&mute=0&rel=0"></iframe>
+    </div>
+
+    <div class="card" id="card-bl">
+      <div class="label">💞 Otra canción</div>
+      <button class="playy" data-target="bl">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Play
+      </button>
+      <iframe class="fill" id="frame-bl" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen data-src="https://www.youtube.com/embed/QlYdRn9FA3Q?autoplay=1&mute=0&rel=0"></iframe>
+    </div>
+
+    <div class="card" id="card-br">
+      <div class="label">🎧 Spotify</div>
+      <button class="playy" data-target="br">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Play
+      </button>
+      <iframe class="fill" id="frame-br" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+        data-src="https://open.spotify.com/embed/track/1UftXJ9vJmYZsBtANNt009?utm_source=generator"></iframe>
+    </div>
+  </div>
+
+  <div class="lyrics-bar">
+    <div class="lyrics-inner" id="lyricsText">
+      I'm hurting, baby, I'm broken down
+I need your loving, loving
+I need it now
+When I'm without you, I'm something weak
+You got me begging, begging
+I'm on my knees
+
+I don't wanna be needing your love
+I just wanna be deep in your love
+And it's killing me when you're away
+Ooh, baby, 'cause I really don't care where you are
+I just wanna be there where you are
+And I gotta get one little taste
+
+Sugar, yes, please
+Won't you come and put it down on me?
+I'm right here, 'cause I need
+Little love and little sympathy
+Yeah, you show me good loving
+Make it alright
+Need a little sweetness in my life
+Sugar, yes, please
+Won't you come and put it down on me?
+
+My broken pieces, you pick them up
+Don't leave me hanging, hanging
+Come give me some
+When I'm without ya, I'm so insecure
+You are the one thing, one thing
+I'm living for
+
+I don't wanna be needing your love
+I just wanna be deep in your love
+And it's killing me when you're away
+Ooh, baby, 'cause I really don't care where you are
+I just wanna be there where you are
+And I gotta get one little taste
+
+Sugar, yes, please
+Won't you come and put it down on me?
+I'm right here, 'cause I need
+Little love and little sympathy
+Yeah, you show me good loving
+Make it alright
+Need a little sweetness in my life
+Sugar, yes, please
+Won't you come and put it down on me?
+
+Yeah
+I want that red velvet
+I want that sugar sweet
+Don't let nobody touch it
+Unless that somebody's me
+I gotta be a man
+There ain't no other way
+'Cause, girl, you're hotter than
+The southern California bay
+I don't wanna play no games
+I don't gotta be afraid
+Don't give all that shy shit
+No make up on, that's my
+
+Sugar, yes, please
+Won't you come and put it down on me?
+I'm right here, 'cause I need
+Little love and little sympathy
+Yeah, baby, you show me good loving
+Make it alright
+Need a little sweetness in my life
+Sugar, yes, please
+Won't you come and put it down on me?
+
+Sugar, yes, please
+Won't you come and put it down on me?
+I'm right here, 'cause I need
+Little love and little sympathy
+Yeah, you show me good loving
+Make it alright
+Need a little sweetness in my life
+Sugar, yes, please
+Won't you come and put it down on me?
+
+Down on me, down on me, ooh
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const cvs = document.getElementById('heartCanvas');
+      const ctx = cvs.getContext('2d');
+      const w = cvs.width, h = cvs.height;
+      const cols = 90, rows = 38;
+      const cellW = w / cols, cellH = h / rows;
+      const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789♥★♡";
+      function heartEq(x,y){ const a = x*x + y*y - 1; return (a*a*a - x*x*y*y*y); }
+      function draw(){
+        ctx.clearRect(0,0,w,h);
+        ctx.fillStyle = '#ffd300';
+        ctx.textAlign='center';
+        ctx.textBaseline='middle';
+        ctx.font = `${Math.floor(Math.min(cellW,cellH)*0.9)}px Courier New, monospace`;
+        for(let r=0;r<rows;r++){
+          for(let c=0;c<cols;c++){
+            const nx = ((c + 0.5)/cols)*2.8 - 1.4;
+            const ny = ((r + 0.5)/rows)*2.4 - 1.2;
+            const f = heartEq(nx, -ny);
+            if(f <= 0){
+              const ch = alphabet[Math.floor(Math.random()*alphabet.length)];
+              const alpha = Math.max(0.35, 1 - Math.min(1, Math.abs(f)*22));
+              ctx.globalAlpha = alpha;
+              ctx.fillText(ch, c*cellW + cellW/2, r*cellH + cellH/2);
+            }
+          }
+        }
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+
+    document.querySelectorAll('.playy').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const slot = btn.getAttribute('data-target');
+        const iframe = document.getElementById('frame-' + slot);
+        if(iframe && !iframe.src){
+          iframe.src = iframe.getAttribute('data-src');
+        }
+        iframe?.classList.add('active');
+        btn.style.display='none';
+      });
+    });
+
+    (function autoplaySugar(){
+      const yt = document.createElement('iframe');
+      yt.width = 0; yt.height = 0;
+      yt.style.position='absolute';
+      yt.style.opacity='0';
+      yt.setAttribute('allow','autoplay');
+      yt.src = "https://www.youtube.com/embed/09R8_2nJtjg?autoplay=1&mute=1&playsinline=1&loop=1&playlist=09R8_2nJtjg";
+      document.body.appendChild(yt);
+    })();
+  </script>
+</body>
+</html>
+
